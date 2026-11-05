@@ -43,14 +43,16 @@ export function useRecaptchaVerifier() {
   }, []);
 
   const verifier = useMemo<ApplicationVerifier>(
-    () => ({
-      type: 'recaptcha',
-      verify: () =>
-        new Promise<string>((resolve, reject) => {
-          pending.current = { resolve, reject };
-          setVisible(true);
-        }),
-    }),
+    () =>
+      ({
+        type: 'recaptcha',
+        verify: () =>
+          new Promise<string>((resolve, reject) => {
+            pending.current = { resolve, reject };
+            setVisible(true);
+          }),
+        _reset: () => {},
+      }) as ApplicationVerifier,
     [],
   );
 
