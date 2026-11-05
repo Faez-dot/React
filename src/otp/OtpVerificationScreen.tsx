@@ -29,6 +29,8 @@ function friendlyError(e: unknown): string {
     'auth/captcha-check-failed': 'reCAPTCHA failed. Make sure authDomain is correct and authorized.',
     'auth/operation-not-allowed':
       'Phone sign-in is not enabled (or this region is blocked) in Firebase Console.',
+    'auth/billing-not-enabled':
+      'Real SMS needs the Firebase Blaze (billing) plan. Upgrade it, or use a Firebase test phone number.',
     'auth/app-not-authorized': 'App not authorized. Check apiKey / authDomain in firebaseConfig.',
   };
   return map[code] ?? (e as Error)?.message ?? 'Something went wrong. Please try again.';

@@ -1,19 +1,21 @@
 import { ApplicationVerifier, RecaptchaVerifier } from 'firebase/auth';
-import React, { useEffect, useMemo, useRef } from 'react';
-import { View } from 'react-native';
+import { useEffect, useMemo, useRef } from 'react';
 import { auth } from './firebaseConfig';
 
 // Web: Firebase's own invisible reCAPTCHA runs directly in the page (no WebView needed).
-const CONTAINER_ID = 'recaptcha-container';
-
+// Every attempt gets a brand-new container element + verifier, because a reCAPTCHA widget
+// cannot be rendered twice into the same element (hot reload / retries caused that error).
 export function useRecaptchaVerifier() {
   const rv = useRef<RecaptchaVerifier | null>(null);
+  const el = useRef<HTMLDivElement | null>(null);
 
   const destroy = () => {
     try {
       rv.current?.clear();
     } catch {}
     rv.current = null;
+    el.current?.remove();
+    el.current = null;
   };
 
   useEffect(() => destroy, []);
@@ -22,17 +24,17 @@ export function useRecaptchaVerifier() {
     const v = {
       type: 'recaptcha',
       verify: async () => {
-        if (!rv.current) {
-          rv.current = new RecaptchaVerifier(auth, CONTAINER_ID, { size: 'invisible' });
-        }
+        destroy();
+        const div = document.createElement('div');
+        document.body.appendChild(div);
+        el.current = div;
+        rv.current = new RecaptchaVerifier(auth, div, { size: 'invisible' });
         return rv.current.verify();
       },
-      // Called by the SDK after a failed attempt so the next try gets a fresh widget.
       _reset: destroy,
     };
     return v as ApplicationVerifier;
   }, []);
 
-  const modal = <View nativeID={CONTAINER_ID} />;
-  return { verifier, modal };
+  return { verifier, modal: null };
 }
