@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "A02",
-    "slug": "A02",
+    "name": "Daymark",
+    "slug": "daymark",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -20,6 +20,9 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      "expo-font"
+    ]
   }
 }
